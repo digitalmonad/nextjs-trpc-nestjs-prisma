@@ -10,18 +10,20 @@ export class TrpcRouter {
   constructor(private readonly trpc: TrpcService) {}
 
   appRouter = this.trpc.router({
-    getOne: this.trpc.procedure
-      .input(
-        z.object({
-          id: z.number(),
-        }) satisfies z.Schema<Pick<Movie, 'id'>>,
-      )
-      .query(({ input }) => {
-        const { id } = input;
-        return {
-          movie: `Movie ${id ? id : `Nothing`}`,
-        };
-      }),
+    movie: this.trpc.router({
+      getById: this.trpc.procedure
+        .input(
+          z.object({
+            id: z.number(),
+          }) satisfies z.Schema<Pick<Movie, 'id'>>,
+        )
+        .query(({ input }) => {
+          const { id } = input;
+          return {
+            movie: `Movie ${id ? id : `Nothing`}`,
+          };
+        }),
+    }),
   });
 
   async applyMiddleware(app: INestApplication) {
